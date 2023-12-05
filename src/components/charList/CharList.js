@@ -14,7 +14,6 @@ class CharList extends Component {
   };
 
   characters = new MarvelServices();
-  charId = 1;
   styleInf = true;
 
   componentDidMount() {
@@ -46,8 +45,15 @@ class CharList extends Component {
 
   render() {
     const { char, loading, error } = this.state;
+    const { onIdAtiveCard } = this.props;
     const elements = char.map((item) => {
-      return <View char={item} key={this.charId++} />;
+      return (
+        <View
+          char={item}
+          key={item.id}
+          onIdAtiveCard={() => onIdAtiveCard(item.id)}
+        />
+      );
     });
     const spinner = loading ? <Spinner styleInf={this.styleInf} /> : null;
     const view = !(Object.keys(char).length === 0) ? (
@@ -72,6 +78,7 @@ class CharList extends Component {
 class View extends Component {
   render() {
     const { name, thumbnail } = this.props.char;
+    const { onIdAtiveCard } = this.props;
     let styleImg =
       thumbnail ===
       "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
@@ -79,8 +86,8 @@ class View extends Component {
         : { objectFit: "cover" };
 
     return (
-      <li className="char__item">
-        <img src={thumbnail} alt="charaster" style={styleImg} />
+      <li className="char__item" onClick={onIdAtiveCard}>
+        <img src={thumbnail} alt={name} style={styleImg} />
         <div className="char__name">{name}</div>
       </li>
     );

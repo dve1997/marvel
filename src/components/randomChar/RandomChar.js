@@ -85,39 +85,41 @@ class RandomChar extends Component {
   }
 }
 
-const View = ({ char }) => {
-  const { name, description, thumbnail, detail, wiki } = char;
-  let descr = description
-    ? description.slice(0, 197) + "..."
-    : "Description not found...";
-  let styleImg =
-    thumbnail ===
-    "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
-      ? { objectFit: "contain " }
-      : { objectFit: "cover" };
+class View extends Component {
+  render() {
+    const { name, description, thumbnail, detail, wiki } = this.props.char;
+    let descr = description
+      ? description.slice(0, 197) + "..."
+      : "Description not found...";
+    let styleImg =
+      thumbnail ===
+      "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
+        ? { objectFit: "contain " }
+        : { objectFit: "cover" };
 
-  return (
-    <div className="randomchar__block">
-      <img
-        src={thumbnail}
-        alt="Random character"
-        className="randomchar__img"
-        style={styleImg}
-      />
-      <div className="randomchar__info">
-        <p className="randomchar__name">{name}</p>
-        <p className="randomchar__descr">{descr}</p>
-        <div className="randomchar__btns">
-          <a href={detail} className="button button__main">
-            <div className="inner">Detail</div>
-          </a>
-          <a href={wiki} className="button button__secondary">
-            <div className="inner">Wiki</div>
-          </a>
+    return (
+      <div className="randomchar__block">
+        <img
+          src={thumbnail}
+          alt={name}
+          className="randomchar__img"
+          style={styleImg}
+        />
+        <div className="randomchar__info">
+          <p className="randomchar__name">{name}</p>
+          <p className="randomchar__descr">{descr}</p>
+          <div className="randomchar__btns">
+            <a href={detail} className="button button__main">
+              <div className="inner">Detail</div>
+            </a>
+            <a href={wiki} className="button button__secondary">
+              <div className="inner">Wiki</div>
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 export default RandomChar;
