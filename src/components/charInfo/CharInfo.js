@@ -1,4 +1,5 @@
 import { Component } from "react";
+import PropTypes from "prop-types";
 
 import Skeleton from "../skeleton/Skeleton";
 import Spinner from "../spinner/Spinner";
@@ -14,6 +15,10 @@ class CharInfo extends Component {
     loading: false,
     error: false,
   };
+
+  // static defaultProps = {
+  //   res: "yes",
+  // };
 
   character = new MarvelServices();
 
@@ -64,6 +69,8 @@ class CharInfo extends Component {
   };
 
   render() {
+    // console.log(this.props.res);
+
     const { loading, char, error, skeleton } = this.state;
     const skeletonStart = skeleton ? <Skeleton /> : null;
     const spinner = loading ? <Spinner /> : null;
@@ -136,5 +143,13 @@ class ComicsItem extends Component {
     return <li className="char__comics-item">{name}</li>;
   }
 }
+
+CharInfo.propTypes = {
+  idActiceCard: PropTypes.number,
+};
+
+// CharInfo.defaultProps = {
+//   res: "yes",
+// };
 
 export default CharInfo;

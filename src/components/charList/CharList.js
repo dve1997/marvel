@@ -1,4 +1,5 @@
 import { Component } from "react";
+import PropTypes from "prop-types";
 
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
@@ -9,21 +10,36 @@ import "./charList.scss";
 class CharList extends Component {
   state = {
     char: [],
+    charEnd: false,
     loading: true,
+    charLoading: false,
     error: false,
   };
 
   characters = new MarvelServices();
   styleInf = true;
+  count = 215;
 
   componentDidMount() {
     this.updateChar();
+    this.setState({
+      charLoading: false,
+    });
   }
 
   onCharState = (char) => {
+    if (char.length < 9) {
+      this.setState({
+        charEnd: true,
+      });
+    }
+
+    let arr = [...this.state.char];
+    arr.push(...char);
     this.setState({
-      char: char,
+      char: arr,
       loading: false,
+      charLoading: false,
     });
   };
 
@@ -33,18 +49,23 @@ class CharList extends Component {
     this.setState({
       error: true,
       loading: false,
+      charLoading: false,
     });
   };
 
   updateChar = () => {
     this.characters
-      .getAllCharacters()
+      .getAllCharacters(this.count)
       .then(this.onCharState)
       .catch(this.onErrorMessage);
+    this.count += 9;
+    this.setState({
+      charLoading: true,
+    });
   };
 
   render() {
-    const { char, loading, error } = this.state;
+    const { char, loading, error, charLoading, charEnd } = this.state;
     const { onIdAtiveCard } = this.props;
     const elements = char.map((item) => {
       return (
@@ -63,14 +84,31 @@ class CharList extends Component {
       <ErrorMessage styleInf={this.styleInf} />
     ) : null;
     const content = spinner ? spinner : view ? elements : errorMessage;
+    const button = charLoading ? (
+      <Spinner styleInf={this.styleInf} />
+    ) : (
+      <Button updateChar={this.updateChar} charEnd={charEnd} />
+    );
 
     return (
       <div className="char__list">
         <ul className="char__grid">{content}</ul>
-        <button className="button button__main button__long">
-          <div className="inner">load more</div>
-        </button>
+        {button}
       </div>
+    );
+  }
+}
+
+class Button extends Component {
+  render() {
+    return (
+      <button
+        className="button button__main button__long"
+        onClick={this.props.updateChar}
+        style={this.props.charEnd ? { display: "none" } : { display: "block" }}
+      >
+        <div className="inner">load more</div>
+      </button>
     );
   }
 }
@@ -93,5 +131,9 @@ class View extends Component {
     );
   }
 }
+
+CharList.propTypes = {
+  onIdAtiveCard: PropTypes.func,
+};
 
 export default CharList;
