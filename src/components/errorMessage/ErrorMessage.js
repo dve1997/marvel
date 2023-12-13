@@ -1,24 +1,19 @@
-import { Component } from "react";
+import { useEffect, useState } from "react";
 
 import "./errorMessage.scss";
 import error from "./Error.png";
 
-class ErrorMessage extends Component {
-  state = {
-    styleError: null,
-  };
+const ErrorMessage = (props) => {
+  const [styleError, setStyleError] = useState(null);
 
-  componentDidMount() {
-    this.setState({
-      styleError: this.props.styleInf,
-    });
-  }
+  useEffect(() => {
+    setStyleError(props.styleInf);
+    props.clearInt();
+  }, [styleError]);
 
-  render() {
-    const styleImg = this.state.styleError ? { gridColumn: "2/2" } : null;
+  const styleImg = styleError ? { gridColumn: "2/2" } : null;
 
-    return <img src={error} alt="Error loading" style={styleImg} />;
-  }
-}
+  return <img src={error} alt="Error loading" style={styleImg} />;
+};
 
 export default ErrorMessage;

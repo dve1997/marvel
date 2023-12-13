@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState } from "react";
 
 import AppHeader from "../appHeader/AppHeader";
 import RandomChar from "../randomChar/RandomChar";
@@ -8,38 +8,32 @@ import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 
 import decoration from "../../resources/img/vision.png";
 
-class App extends Component {
-  state = {
-    idActiceCard: null,
+const App = () => {
+  const [idActiveCard, setIdActiveCard] = useState(null);
+
+  const changeIdAtiveCard = (id) => {
+    setIdActiveCard(id);
   };
 
-  onIdAtiveCard = (id) => {
-    this.setState({
-      idActiceCard: id,
-    });
-  };
-
-  render() {
-    return (
-      <div className="app">
-        <AppHeader />
-        <main>
+  return (
+    <div className="app">
+      <AppHeader />
+      <main>
+        <ErrorBoundary>
+          <RandomChar />
+        </ErrorBoundary>
+        <div className="char__content">
           <ErrorBoundary>
-            <RandomChar />
+            <CharList changeIdAtiveCard={changeIdAtiveCard} />
           </ErrorBoundary>
-          <div className="char__content">
-            <ErrorBoundary>
-              <CharList onIdAtiveCard={this.onIdAtiveCard} />
-            </ErrorBoundary>
-            <ErrorBoundary>
-              <CharInfo idActiceCard={this.state.idActiceCard} />
-            </ErrorBoundary>
-          </div>
-          <img className="bg-decoration" src={decoration} alt="vision" />
-        </main>
-      </div>
-    );
-  }
-}
+          <ErrorBoundary>
+            <CharInfo idActiceCard={idActiveCard} />
+          </ErrorBoundary>
+        </div>
+        <img className="bg-decoration" src={decoration} alt="vision" />
+      </main>
+    </div>
+  );
+};
 
 export default App;
