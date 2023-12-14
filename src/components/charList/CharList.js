@@ -3,26 +3,22 @@ import PropTypes from "prop-types";
 
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
-import MarvelServices from "../../services/MarvelService";
+import useMarvelServices from "../../services/MarvelService";
 
 import "./charList.scss";
 
 const CharList = ({ changeIdAtiveCard }) => {
   const [char, setChar] = useState([]);
   const [charEnd, setCharEnd] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [charLoading, setCharLoading] = useState(false);
-  const [error, setError] = useState(false);
   const [count, setCount] = useState(215);
 
-  const characters = new MarvelServices();
+  const characters = useMarvelServices();
+  const { loading, error, getAllCharacters } = characters;
   const styleInf = true;
 
   const updateChar = () => {
-    characters
-      .getAllCharacters(count)
-      .then(changeCharState)
-      .catch(changeErrorMessage);
+    getAllCharacters(count).then(changeCharState).catch(changeErrorMessage);
     setCount((count) => {
       return count + 9;
     });
@@ -37,16 +33,11 @@ const CharList = ({ changeIdAtiveCard }) => {
     let arr = [...char];
     arr.push(...charNew);
     setChar(arr);
-    setLoading(false);
     setCharLoading(false);
   };
 
-  const changeErrorMessage = (error) => {
-    setError(true);
-    setLoading(false);
+  const changeErrorMessage = () => {
     setCharLoading(false);
-
-    console.error(error);
   };
 
   useEffect(() => {

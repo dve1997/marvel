@@ -4,49 +4,36 @@ import PropTypes from "prop-types";
 import Skeleton from "../skeleton/Skeleton";
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
-import MarvelServices from "../../services/MarvelService";
+import useMarvelServices from "../../services/MarvelService";
 
 import "./charInfo.scss";
 
 const CharInfo = ({ idActiceCard }) => {
   const [char, setChar] = useState({});
   const [skeleton, setSkeleton] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
 
   // static defaultProps = {
   //   res: "yes",
   // };
 
-  const character = new MarvelServices();
+  const character = useMarvelServices();
+  const { loading, error, setLoading, getCharacter } = character;
 
   const updateChar = () => {
     if (!idActiceCard) {
       return;
     } else {
       changeUpdateChar();
-      character
-        .getCharacter(idActiceCard)
-        .then(changeCharState)
-        .catch(changeErrorMessage);
+      getCharacter(idActiceCard).then(changeCharState);
     }
   };
 
   const changeUpdateChar = () => {
-    setLoading(true);
     setSkeleton(false);
   };
 
   const changeCharState = (char) => {
     setChar(char);
-    setLoading(false);
-  };
-
-  const changeErrorMessage = (error) => {
-    setError(true);
-    setLoading(false);
-
-    console.error(error);
   };
 
   useEffect(() => {
@@ -54,6 +41,7 @@ const CharInfo = ({ idActiceCard }) => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     updateChar();
   }, [idActiceCard]);
 
