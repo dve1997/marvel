@@ -8,7 +8,9 @@ const ErrorMessage = (props) => {
 
   useEffect(() => {
     setStyleError(props.styleInf);
-    props.clearInt();
+    if (props.clearIn) {
+      props.clearInt();
+    }
   }, [styleError]);
 
   const styleImg = styleError ? { gridColumn: "2/2" } : null;

@@ -1,38 +1,22 @@
-import { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import AppHeader from "../appHeader/AppHeader";
-import RandomChar from "../randomChar/RandomChar";
-import CharList from "../charList/CharList";
-import CharInfo from "../charInfo/CharInfo";
-import ErrorBoundary from "../errorBoundary/ErrorBoundary";
-
-import decoration from "../../resources/img/vision.png";
+import { MainCharasters, Comics, Page404 } from "../pages";
 
 const App = () => {
-  const [idActiveCard, setIdActiveCard] = useState(null);
-
-  const changeIdAtiveCard = (id) => {
-    setIdActiveCard(id);
-  };
-
   return (
-    <div className="app">
-      <AppHeader />
-      <main>
-        <ErrorBoundary>
-          <RandomChar />
-        </ErrorBoundary>
-        <div className="char__content">
-          <ErrorBoundary>
-            <CharList changeIdAtiveCard={changeIdAtiveCard} />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <CharInfo idActiceCard={idActiveCard} />
-          </ErrorBoundary>
-        </div>
-        <img className="bg-decoration" src={decoration} alt="vision" />
-      </main>
-    </div>
+    <Router basename="/marvel">
+      <div className="app">
+        <AppHeader />
+        <main>
+          <Routes>
+            <Route path="/" element={<MainCharasters />} />
+            <Route path="/comics" element={<Comics />} />
+            <Route path="*" element={<Page404 />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 };
 
