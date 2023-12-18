@@ -7,7 +7,7 @@ import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 
 import decoration from "../../resources/img/vision.png";
 
-const MainCharasters = () => {
+const MainPage = () => {
   const [idActiveCard, setIdActiveCard] = useState(null);
 
   const changeIdAtiveCard = (id) => {
@@ -32,4 +32,4 @@ const MainCharasters = () => {
   );
 };
 
-export default MainCharasters;
+export default MainPage;

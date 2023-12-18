@@ -1,5 +1,6 @@
-import MainCharasters from "./MainCharasters";
-import Comics from "./Comics";
+import MainPage from "./MainPage";
+import ComicsPage from "./ComicsPage";
+import SingleComicPage from "./SingleComicPage";
 import Page404 from "./404";
 
-export { MainCharasters, Comics, Page404 };
+export { MainPage, ComicsPage, SingleComicPage, Page404 };
