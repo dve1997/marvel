@@ -1,6 +1,37 @@
 @import "../../style/variables.scss";
 
 .char {
+  opacity: 0;
+  visibility: hidden;
+}
+.char-enter {
+  opacity: 0;
+  visibility: hidden;
+}
+.char-enter-active {
+  opacity: 1;
+  transition: opacity 2000ms;
+  visibility: visible;
+}
+.char-enter-done {
+  opacity: 1;
+  visibility: visible;
+}
+.char-exit {
+  opacity: 1;
+  visibility: visible;
+}
+.char-exit-active {
+  opacity: 0;
+  transition: opacity 2000ms;
+  visibility: hidden;
+}
+.char-exit-done {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.char {
   &__content {
     margin-top: 50px;
     display: grid;

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { CSSTransition } from "react-transition-group";
 import { Link } from "react-router-dom";
 
 import useMarvelServices from "../../services/MarvelService";
@@ -16,6 +17,7 @@ const ComicsList = () => {
   const comicse = useMarvelServices();
   const { loading, error, getComics } = comicse;
   const styleInf = true;
+  const nodeRef = useRef(null);
 
   const updateComics = () => {
     getComics(count, 8).then(changeComicsState).catch(changeErrorMessage);
@@ -61,10 +63,17 @@ const ComicsList = () => {
   );
 
   return (
-    <div className="comics__list">
-      <ul className="comics__grid">{content}</ul>
-      {button}
-    </div>
+    <CSSTransition
+      nodeRef={nodeRef}
+      in={Boolean(view)}
+      timeout={2000}
+      classNames="char"
+    >
+      <div className="comics__list" ref={nodeRef}>
+        <ul className="comics__grid">{content}</ul>
+        {button}
+      </div>
+    </CSSTransition>
   );
 };
 

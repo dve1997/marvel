@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { CSSTransition } from "react-transition-group";
 import PropTypes from "prop-types";
 
 import Skeleton from "../skeleton/Skeleton";
@@ -18,6 +19,7 @@ const CharInfo = ({ idActiceCard }) => {
 
   const character = useMarvelServices();
   const { loading, error, setLoading, getCharacter } = character;
+  const nodeRef = useRef(null);
 
   const updateChar = () => {
     if (!idActiceCard) {
@@ -59,7 +61,18 @@ const CharInfo = ({ idActiceCard }) => {
     ? view
     : errorMessage;
 
-  return <div className="char__info">{content}</div>;
+  return (
+    <CSSTransition
+      nodeRef={nodeRef}
+      in={Boolean(view)}
+      timeout={2000}
+      classNames="char"
+    >
+      <div ref={nodeRef} className="char__info">
+        {content}
+      </div>
+    </CSSTransition>
+  );
 };
 
 const View = ({

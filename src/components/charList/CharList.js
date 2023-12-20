@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { CSSTransition } from "react-transition-group";
 import PropTypes from "prop-types";
 
 import Spinner from "../spinner/Spinner";
@@ -16,6 +17,7 @@ const CharList = ({ changeIdAtiveCard }) => {
   const characters = useMarvelServices();
   const { loading, error, getAllCharacters } = characters;
   const styleInf = true;
+  const nodeRef = useRef(null);
 
   const updateChar = () => {
     getAllCharacters(count).then(changeCharState).catch(changeErrorMessage);
@@ -65,10 +67,17 @@ const CharList = ({ changeIdAtiveCard }) => {
   );
 
   return (
-    <div className="char__list">
-      <ul className="char__grid">{content}</ul>
-      {button}
-    </div>
+    <CSSTransition
+      nodeRef={nodeRef}
+      in={Boolean(view)}
+      timeout={2000}
+      classNames="char"
+    >
+      <div className="char__list" ref={nodeRef}>
+        <ul className="char__grid">{content}</ul>
+        {button}
+      </div>
+    </CSSTransition>
   );
 };
 
