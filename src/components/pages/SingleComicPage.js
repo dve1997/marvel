@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelServices from "../../services/MarvelService";
+import AppBanner from "../appBanner/AppBanner";
 
 import "./singlePage.scss";
 
@@ -36,7 +38,18 @@ const SingleComicPage = () => {
   const errorMessage = error ? <ErrorMessage /> : null;
   const content = spinner ? spinner : view ? view : errorMessage;
 
-  return <div className="single-comic">{content}</div>;
+  return (
+    <>
+      <HelmetProvider>
+        <meta name="description" content="Comic" />
+        <title itemProp="name" lang="en">
+          {comic.title}
+        </title>
+      </HelmetProvider>
+      <AppBanner />
+      <div className="single-comic">{content}</div>
+    </>
+  );
 };
 
 const View = ({ comic: { thumbnail, title, description, pages, price } }) => {
