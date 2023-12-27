@@ -5,7 +5,7 @@ import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelServices from "../../services/MarvelService";
 
-import "./singleComicPage.scss";
+import "./singlePage.scss";
 
 const SingleComicPage = () => {
   const { comicId } = useParams();
@@ -19,11 +19,11 @@ const SingleComicPage = () => {
     if (!comicId) {
       return;
     } else {
-      getComic(comicId).then(changeCharState);
+      getComic(comicId).then(changeComicState);
     }
   };
 
-  const changeCharState = (comic) => {
+  const changeComicState = (comic) => {
     setComic(comic);
   };
 

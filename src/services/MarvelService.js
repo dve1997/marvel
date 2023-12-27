@@ -36,6 +36,15 @@ const useMarvelServices = () => {
     return _transformComics(comics.data.results[0]);
   };
 
+  const getCharacterForName = async (name) => {
+    const char = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+    if (char.data.results.length === 0) {
+      return false;
+    } else {
+      return _transformChar(char.data.results[0]);
+    }
+  };
+
   const _transformChar = (char) => {
     return {
       name: char.name,
@@ -67,6 +76,7 @@ const useMarvelServices = () => {
     getCharacter,
     getComics,
     getComic,
+    getCharacterForName,
   };
 };
 

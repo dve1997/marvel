@@ -1,0 +1,43 @@
+@import "../../style/variables.scss";
+
+.char {
+  &__search {
+    padding: 25px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.25);
+  }
+  &__text {
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 24px;
+    margin-bottom: 15px;
+  }
+  &__flex {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+  }
+  &__input {
+    width: 250px;
+    height: 40px;
+    padding-left: 10px;
+    margin: 0 25px 10px 0;
+    border: unset;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+  &__error {
+    font-weight: bold;
+    font-size: 14px;
+    color: $main-color;
+  }
+  &__page {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+  }
+  &__resp {
+    font-weight: bold;
+    font-size: 14px;
+    color: green;
+    margin-right: 78px;
+  }
+}
