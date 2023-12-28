@@ -5,14 +5,14 @@ import { Link } from "react-router-dom";
 import Spinner from "../spinner/Spinner";
 import useMarvelServices from "../../services/MarvelService";
 import setContentList from "../../utils/setContentList";
+import setButton from "../../utils/setButton";
 
 import "./comicsList.scss";
 
 const ComicsList = () => {
   const [comics, setComics] = useState([]);
-  const [comicsEnd, setComicsEnd] = useState(false);
-  const [comicsLoading, setComicsLoading] = useState(false);
   const [count, setCount] = useState(215);
+  const [buttonLoad, setButtonLoad] = useState("loading");
 
   const comicse = useMarvelServices();
   const { process, setProcess, getComics } = comicse;
@@ -24,42 +24,38 @@ const ComicsList = () => {
     setCount((count) => {
       return count + 8;
     });
-    setComicsLoading(true);
+    setButtonLoad("loading");
   };
 
   const changeComicsState = (comicsNew) => {
     if (comicsNew.length < 8) {
-      setComicsEnd(true);
+      setButtonLoad("load");
     }
 
     let arr = [...comics];
     arr.push(...comicsNew);
     setComics(arr);
-    setComicsLoading(false);
+    setButtonLoad("pending");
     setProcess("show");
   };
 
   const changeErrorMessage = () => {
-    setComicsLoading(false);
+    setButtonLoad("pending");
   };
 
   useEffect(() => {
     updateComics();
-    setComicsLoading(false);
+    setButtonLoad("load");
     setProcess("loading");
   }, []);
 
   const elements = comics.map((item) => {
     return <View comics={item} key={item.id} />;
   });
+
   const view = !(Object.keys(comics).length === 0) ? (
     <View comics={comics} />
   ) : null;
-  const button = comicsLoading ? (
-    <Spinner styleInf={styleInf} />
-  ) : (
-    <Button updateComics={updateComics} comicsEnd={comicsEnd} />
-  );
 
   return (
     <CSSTransition
@@ -72,19 +68,15 @@ const ComicsList = () => {
         <ul className="comics__grid">
           {setContentList(elements, process, styleInf)}
         </ul>
-        {button}
+        {setButton(Button, Spinner, buttonLoad, updateComics)}
       </div>
     </CSSTransition>
   );
 };
 
-const Button = ({ updateComics, comicsEnd }) => {
+const Button = ({ update }) => {
   return (
-    <button
-      className="button button__main button__long"
-      onClick={updateComics}
-      style={comicsEnd ? { display: "none" } : { display: "block" }}
-    >
+    <button className="button button__main button__long" onClick={update}>
       <div className="inner">load more</div>
     </button>
   );

@@ -5,14 +5,14 @@ import PropTypes from "prop-types";
 import Spinner from "../spinner/Spinner";
 import useMarvelServices from "../../services/MarvelService";
 import setContentList from "../../utils/setContentList";
+import setButton from "../../utils/setButton";
 
 import "./charList.scss";
 
 const CharList = ({ changeIdAtiveCard }) => {
   const [char, setChar] = useState([]);
-  const [charEnd, setCharEnd] = useState(false);
-  const [charLoading, setCharLoading] = useState(false);
   const [count, setCount] = useState(215);
+  const [buttonLoad, setButtonLoad] = useState("loading");
 
   const characters = useMarvelServices();
   const { process, setProcess, getAllCharacters } = characters;
@@ -24,28 +24,28 @@ const CharList = ({ changeIdAtiveCard }) => {
     setCount((count) => {
       return count + 9;
     });
-    setCharLoading(true);
+    setButtonLoad("loading");
   };
 
   const changeCharState = (charNew) => {
     if (charNew.length < 9) {
-      setCharEnd(true);
+      setButtonLoad("load");
     }
 
     let arr = [...char];
     arr.push(...charNew);
     setChar(arr);
-    setCharLoading(false);
+    setButtonLoad("pending");
     setProcess("show");
   };
 
   const changeErrorMessage = () => {
-    setCharLoading(false);
+    setButtonLoad("pending");
   };
 
   useEffect(() => {
     updateChar();
-    setCharLoading(false);
+    setButtonLoad("load");
     setProcess("loading");
   }, []);
 
@@ -60,11 +60,6 @@ const CharList = ({ changeIdAtiveCard }) => {
   });
 
   const view = !(Object.keys(char).length === 0) ? true : null;
-  const button = charLoading ? (
-    <Spinner styleInf={styleInf} />
-  ) : (
-    <Button updateChar={updateChar} charEnd={charEnd} />
-  );
 
   return (
     <CSSTransition
@@ -77,19 +72,15 @@ const CharList = ({ changeIdAtiveCard }) => {
         <ul className="char__grid">
           {setContentList(elements, process, styleInf)}
         </ul>
-        {button}
+        {setButton(Button, Spinner, buttonLoad, updateChar)}
       </div>
     </CSSTransition>
   );
 };
 
-const Button = ({ updateChar, charEnd }) => {
+const Button = ({ update }) => {
   return (
-    <button
-      className="button button__main button__long"
-      onClick={updateChar}
-      style={charEnd ? { display: "none" } : { display: "block" }}
-    >
+    <button className="button button__main button__long" onClick={update}>
       <div className="inner">load more</div>
     </button>
   );
