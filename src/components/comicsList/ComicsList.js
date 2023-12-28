@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { Link } from "react-router-dom";
 
-import useMarvelServices from "../../services/MarvelService";
 import Spinner from "../spinner/Spinner";
-import ErrorMessage from "../errorMessage/ErrorMessage";
+import useMarvelServices from "../../services/MarvelService";
+import setContentList from "../../utils/setContentList";
 
 import "./comicsList.scss";
 
@@ -15,7 +15,7 @@ const ComicsList = () => {
   const [count, setCount] = useState(215);
 
   const comicse = useMarvelServices();
-  const { loading, error, getComics } = comicse;
+  const { process, setProcess, getComics } = comicse;
   const styleInf = true;
   const nodeRef = useRef(null);
 
@@ -36,6 +36,7 @@ const ComicsList = () => {
     arr.push(...comicsNew);
     setComics(arr);
     setComicsLoading(false);
+    setProcess("show");
   };
 
   const changeErrorMessage = () => {
@@ -45,17 +46,15 @@ const ComicsList = () => {
   useEffect(() => {
     updateComics();
     setComicsLoading(false);
+    setProcess("loading");
   }, []);
 
   const elements = comics.map((item) => {
     return <View comics={item} key={item.id} />;
   });
-  const spinner = loading ? <Spinner styleInf={styleInf} /> : null;
   const view = !(Object.keys(comics).length === 0) ? (
     <View comics={comics} />
   ) : null;
-  const errorMessage = error ? <ErrorMessage styleInf={styleInf} /> : null;
-  const content = spinner ? spinner : view ? elements : errorMessage;
   const button = comicsLoading ? (
     <Spinner styleInf={styleInf} />
   ) : (
@@ -70,7 +69,9 @@ const ComicsList = () => {
       classNames="char"
     >
       <div className="comics__list" ref={nodeRef}>
-        <ul className="comics__grid">{content}</ul>
+        <ul className="comics__grid">
+          {setContentList(elements, process, styleInf)}
+        </ul>
         {button}
       </div>
     </CSSTransition>

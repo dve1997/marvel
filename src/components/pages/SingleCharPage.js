@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { CSSTransition } from "react-transition-group";
 import { Link, useParams } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 
-import Spinner from "../spinner/Spinner";
-import ErrorMessage from "../errorMessage/ErrorMessage";
-import useMarvelServices from "../../services/MarvelService";
 import AppBanner from "../appBanner/AppBanner";
+import useMarvelServices from "../../services/MarvelService";
+import setContentWithoutSkeleton from "../../utils/setContentWithoutSkeleton";
 
 import "./singlePage.scss";
 
@@ -15,7 +15,8 @@ const SingleCharPage = () => {
   const [char, setChar] = useState({});
 
   const charater = useMarvelServices();
-  const { loading, error, getCharacterForName } = charater;
+  const { process, setProcess, getCharacterForName } = charater;
+  const nodeRef = useRef(null);
 
   const updateChar = () => {
     if (!charName) {
@@ -27,16 +28,15 @@ const SingleCharPage = () => {
 
   const changeCharState = (char) => {
     setChar(char);
+    setProcess("show");
   };
 
   useEffect(() => {
     updateChar();
+    setProcess("loading");
   }, []);
 
-  const spinner = loading ? <Spinner /> : null;
-  const view = Object.keys(char).length !== 0 ? <View char={char} /> : null;
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const content = spinner ? spinner : view ? view : errorMessage;
+  const view = Object.keys(char).length !== 0 ? true : null;
 
   return (
     <>
@@ -46,13 +46,24 @@ const SingleCharPage = () => {
           {char.name}
         </title>
       </HelmetProvider>
-      <AppBanner />
-      <div className="single-comic">{content}</div>
+      <CSSTransition
+        nodeRef={nodeRef}
+        in={view}
+        timeout={2000}
+        classNames="char"
+      >
+        <div ref={nodeRef}>
+          <AppBanner />
+          <div className="single-comic">
+            {setContentWithoutSkeleton(View, process, char)}
+          </div>
+        </div>
+      </CSSTransition>
     </>
   );
 };
 
-const View = ({ char: { thumbnail, name, description } }) => {
+const View = ({ data: { thumbnail, name, description } }) => {
   return (
     <>
       <img src={thumbnail} alt={name} className="single-comic__img" />

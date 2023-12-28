@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import PropTypes from "prop-types";
 
 import Spinner from "../spinner/Spinner";
-import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelServices from "../../services/MarvelService";
+import setContentList from "../../utils/setContentList";
 
 import "./charList.scss";
 
@@ -15,7 +15,7 @@ const CharList = ({ changeIdAtiveCard }) => {
   const [count, setCount] = useState(215);
 
   const characters = useMarvelServices();
-  const { loading, error, getAllCharacters } = characters;
+  const { process, setProcess, getAllCharacters } = characters;
   const styleInf = true;
   const nodeRef = useRef(null);
 
@@ -36,6 +36,7 @@ const CharList = ({ changeIdAtiveCard }) => {
     arr.push(...charNew);
     setChar(arr);
     setCharLoading(false);
+    setProcess("show");
   };
 
   const changeErrorMessage = () => {
@@ -45,6 +46,7 @@ const CharList = ({ changeIdAtiveCard }) => {
   useEffect(() => {
     updateChar();
     setCharLoading(false);
+    setProcess("loading");
   }, []);
 
   const elements = char.map((item) => {
@@ -56,10 +58,8 @@ const CharList = ({ changeIdAtiveCard }) => {
       />
     );
   });
-  const spinner = loading ? <Spinner styleInf={styleInf} /> : null;
-  const view = !(Object.keys(char).length === 0) ? <View char={char} /> : null;
-  const errorMessage = error ? <ErrorMessage styleInf={styleInf} /> : null;
-  const content = spinner ? spinner : view ? elements : errorMessage;
+
+  const view = !(Object.keys(char).length === 0) ? true : null;
   const button = charLoading ? (
     <Spinner styleInf={styleInf} />
   ) : (
@@ -74,7 +74,9 @@ const CharList = ({ changeIdAtiveCard }) => {
       classNames="char"
     >
       <div className="char__list" ref={nodeRef}>
-        <ul className="char__grid">{content}</ul>
+        <ul className="char__grid">
+          {setContentList(elements, process, styleInf)}
+        </ul>
         {button}
       </div>
     </CSSTransition>

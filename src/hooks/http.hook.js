@@ -1,8 +1,7 @@
 import { useState, useCallback } from "react";
 
 export const useHttp = () => {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [process, setProcess] = useState("pending");
 
   const request = useCallback(async (url) => {
     try {
@@ -10,19 +9,22 @@ export const useHttp = () => {
       if (!response.ok) {
         throw new Error("Data was not received");
       }
-      setLoading(false);
       return await response.json();
     } catch (e) {
-      setLoading(false);
-      setError(true);
+      setProcess("error");
       console.error(e);
       throw e;
     }
   }, []);
 
   const changeError = useCallback(() => {
-    setError(false);
+    setProcess("loading");
   }, []);
 
-  return { loading, error, setLoading, request, changeError };
+  return {
+    process,
+    setProcess,
+    request,
+    changeError,
+  };
 };

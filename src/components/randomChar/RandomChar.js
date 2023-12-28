@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 
-import Spinner from "../spinner/Spinner";
-import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelServices from "../../services/MarvelService";
+import setContentWithoutSkeleton from "../../utils/setContentWithoutSkeleton";
 
 import "./randomChar.scss";
 import mjolnir from "../../resources/img/mjolnir.png";
@@ -12,10 +11,9 @@ const RandomChar = () => {
   const [char, setChar] = useState({});
 
   const character = useMarvelServices();
-  const { loading, error, setLoading, getCharacter } = character;
+  const { process, setProcess, getCharacter } = character;
   let timerId = 0;
   const nodeRef = useRef(null);
-  const styleInf = true;
 
   const updateChar = () => {
     const id = Math.floor(Math.random() * (1011400 - 1011000 + 1)) + 1011000;
@@ -24,26 +22,27 @@ const RandomChar = () => {
 
   const changeCharState = (char) => {
     setChar(char);
+    setProcess("show");
   };
 
   const onUpdateChar = () => {
-    setLoading(true);
+    setProcess("loading");
     updateChar();
   };
 
   useEffect(() => {
     updateChar();
+    setProcess("loading");
     // timerId = setInterval(updateChar, 5000);
   }, []);
 
   const clearInt = useCallback(() => {
-    return clearInterval(timerId);
-  }, [error]);
+    if (process === "error") {
+      return clearInterval(timerId);
+    }
+  }, [process]);
 
-  const spinner = loading ? <Spinner /> : null;
-  const view = !(Object.keys(char).length === 0) ? <View char={char} /> : null;
-  const errorMessage = error ? <ErrorMessage clearInt={clearInt} /> : null;
-  const content = spinner ? spinner : view ? view : errorMessage;
+  const view = !(Object.keys(char).length === 0) ? true : null;
 
   return (
     <div className="randomchar">
@@ -54,7 +53,8 @@ const RandomChar = () => {
         classNames="char"
       >
         <div className="randomchar__block" ref={nodeRef}>
-          {content}
+          {setContentWithoutSkeleton(View, process, char)}
+          {clearInt()}
         </div>
       </CSSTransition>
       <div className="randomchar__static">
@@ -73,7 +73,7 @@ const RandomChar = () => {
   );
 };
 
-const View = ({ char: { name, description, thumbnail, detail, wiki } }) => {
+const View = ({ data: { name, description, thumbnail, detail, wiki } }) => {
   let descr = description
     ? description.slice(0, 197) + "..."
     : "Description not found...";

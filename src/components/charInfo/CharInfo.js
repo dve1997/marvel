@@ -2,81 +2,55 @@ import { useEffect, useState, useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import PropTypes from "prop-types";
 
-import Skeleton from "../skeleton/Skeleton";
-import Spinner from "../spinner/Spinner";
-import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelServices from "../../services/MarvelService";
+import setContentWithSkeleton from "../../utils/setContentWithSkeleton";
 
 import "./charInfo.scss";
 
 const CharInfo = ({ idActiceCard }) => {
   const [char, setChar] = useState({});
-  const [skeleton, setSkeleton] = useState(true);
 
   // static defaultProps = {
   //   res: "yes",
   // };
 
   const character = useMarvelServices();
-  const { loading, error, setLoading, getCharacter } = character;
+  const { process, setProcess, getCharacter } = character;
   const nodeRef = useRef(null);
 
   const updateChar = () => {
     if (!idActiceCard) {
       return;
     } else {
-      changeUpdateChar();
+      setProcess("loading");
       getCharacter(idActiceCard).then(changeCharState);
     }
   };
 
-  const changeUpdateChar = () => {
-    setSkeleton(false);
-  };
-
   const changeCharState = (char) => {
     setChar(char);
+    setProcess("show");
   };
 
   useEffect(() => {
-    updateChar();
-  }, []);
-
-  useEffect(() => {
-    setLoading(true);
     updateChar();
   }, [idActiceCard]);
 
   // console.log(this.props.res);
 
-  const skeletonStart = skeleton ? <Skeleton /> : null;
-  const spinner = loading ? <Spinner /> : null;
-  const view = Object.keys(char).length !== 0 ? <View char={char} /> : null;
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const content = skeletonStart
-    ? skeletonStart
-    : spinner
-    ? spinner
-    : view
-    ? view
-    : errorMessage;
+  const view = Object.keys(char).length !== 0 ? true : null;
 
   return (
-    <CSSTransition
-      nodeRef={nodeRef}
-      in={Boolean(view)}
-      timeout={2000}
-      classNames="char"
-    >
+    <CSSTransition nodeRef={nodeRef} in={view} timeout={2000} classNames="char">
       <div ref={nodeRef} className="char__info">
-        {content}
+        {setContentWithSkeleton(View, process, char)}
       </div>
     </CSSTransition>
   );
 };
 
 const View = ({
-  char: { name, description, thumbnail, detail, wiki, comics },
+  data: { name, description, thumbnail, detail, wiki, comics },
 }) => {
   let descr = description
     ? description.slice(0, 297) + "..."
